@@ -1953,3 +1953,57 @@ class Solution {
 	}
 }
 ```
+
+**Cách 2: Hack!!!**
+
+```java
+package ex;
+
+import java.util.*;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+	static int power(int a, int n, int p) {
+		// Initialize result
+		int res = 1;
+
+		// Update 'a' if 'a' >= p
+		a = a % p;
+
+		while (n > 0) {
+			// If n is odd, multiply 'a' with result
+			if ((n & 1) == 1)
+				res = (res * a) % p;
+
+			// n must be even now
+			n = n >> 1; // n = n/2
+			a = (a * a) % p;
+		}
+		return res;
+	}
+
+// Driver code
+	public static void main(String[] args) {
+		int mod = 123456;
+
+		int n = sc.nextInt();
+		int pow = (int) Math.floor((n - 1) / 6);
+		int primeLessThan = 6 * pow + 1;
+		int primeGatherThan = 6 * (pow + 1) + 1;
+		int m = Math.abs(primeGatherThan - n) > Math.abs(primeLessThan - n) ? primeLessThan : primeGatherThan;
+		// calc n^m mod (mod)
+		System.out.println(power(n, m, mod));
+	}
+}
+```
+
+### Bài 32:
+
+- Áp dụng các thuật toán đã được học em hãy cài đặt chương trình giải bài toán mô
+  phỏng cách mã và giải mã của hệ mật RSA như sau:
+- Tìm số nguyên số p, q (trong đó 100 < p, q < 500)
+- Tính n = p.q; phi(n) = (p – 1) (q – 1)
+- Chọn e (1<e< phi(n)) là số nguyên tố cùng nhau với phi(n) (gcd(e, phi(n)) = 1) và tính d = e-1
+  mod phi(n)
+- Tính bản mã c của thông điệp m, với m = SBD + 123, c = me mod n
+- Giải mã thông điệp, tính m = cd mod n
