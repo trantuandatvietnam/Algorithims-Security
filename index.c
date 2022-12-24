@@ -1,36 +1,37 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 int main()
 {
-    int n, i, j, p, t, check;
-    printf("\nNhap n: ");
+    int a, b, m, n, d, last, i, j, count;
+    printf("Nhap m ");
+    scanf("%d", &m);
+    printf("Nhap n ");
     scanf("%d", &n);
-    int a[n];
-    int b[n];
-    j = 0;
-    for (i = 2; i <= n; i++)
+    printf("Nhap d ");
+    scanf("%d", &d);
+    if (d > n)
+        printf("Khong ton tai");
+    a = b = j = 0;
+    last = n / d;
+
+    for (i = 2; i <= last; i++)
     {
-        a[i] = 1;
-    }
-    for (p = 2; p < n; p++)
-    {
-        t = n / p;
-        for (i = 2; i <= t; i++)
-            a[p * i] = 0;
-    }
-    for (i = 2; i <= n; i++)
-    {
-        if (a[i] == 1)
-        {
-            b[j] = i;
-            j++;
-        }
+        a = d;
+        b = d * i;
+        printf("Cap so %d %d\n", a, b);
     }
 
-    for (i = 1; i < j; i++)
+    for (i = 2; i <= last; i++)
     {
-        check = b[i] - b[i - 1];
-        if (check == 2)
-            printf("\n 2 cap so do la: %d %d", b[i - 1], b[i]);
+        a = d * i;
+        if ((a > m) && (a < n))
+        {
+            for (j = 1; j <= last; j++)
+            {
+                b = d * j;
+                if ((b < n) && (j % i != 0))
+                    printf("Cap so %d %d\n", a, b);
+            }
+        }
     }
 }

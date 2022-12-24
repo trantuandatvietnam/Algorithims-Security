@@ -780,3 +780,205 @@ public class Solution {
 	}
 }
 ```
+
+### Bài 15 Viết chương trình Hai số nguyên tố sinh đôi là hai số nguyên tố hơn kém nhau 2 đơn vị. Tìm hai số nguyên tố sinh đôi nhỏ hơn hoặc bằng N, với N được nhập vào từ bàn phím.
+
+```java
+package ex;
+
+import java.util.*;
+import java.lang.Math;
+
+public class Solution {
+
+	public static boolean isPrime(int n) {
+		if (n <= 1)
+			return false;
+
+		// Check if n=2 or n=3
+		if (n == 2 || n == 3)
+			return true;
+
+		// Check whether n is divisible by 2 or 3
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+
+		// Check from 5 to square root of n
+		// Iterate i by (i+6)
+		for (int i = 5; i <= Math.sqrt(n); i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		for(int i = 2; i <= n - 2; i++) {
+			if(isPrime(i) && isPrime(i + 2)) {
+				System.out.println(i + " " + (i + 2));
+			}
+		}
+	}
+}
+```
+
+### Bài 16: Viết chương trình tìm các số nguyên tố từ một mảng sinh ngẫu nhiên có kích thước N, với N nhập vào từ bàn phím.
+
+```c
+#include <stdio.h>
+#include <math.h>
+int main()
+{
+    int check, n, i, j, ra;
+
+    printf("Nhap so n: ");
+    scanf("%d", &n);
+    for (j = 0; j < n; j++)
+    {
+        check = 1;
+        ra = rand();
+        printf("%d", ra);
+        for (i = 2; i < sqrt(ra); i++)
+        {
+            if (ra % i == 0)
+                check = 0;
+        }
+        if (check == 1)
+            printf(" Day la so nguyen to\n");
+        else
+            printf(" Day khong phai la so nguyen to\n");
+    }
+}
+```
+
+### Bài 17:
+
+- Viết chương trình tìm số nguyên dương x nhỏ nhất và nhỏ hơn N nhập từ bàn phím sao cho giá trị của biểu thức Ax^2 + Bx + C là một số nguyên tố với A,B,C là các số nguyên nhập vào từ bàn phím.
+
+```c
+#include <stdio.h>
+#include <math.h>
+int main()
+{
+    int check, n, i, j, ra, x, A, B, C;
+
+    printf("Nhap so n: ");
+    scanf("%d", &n);
+    printf("Nhap A: ");
+    scanf("%d", &A);
+    printf("Nhap B: ");
+    scanf("%d", &B);
+    printf("Nhap C: ");
+    scanf("%d", &C);
+    for (x = 1; x < n; x++)
+    {
+        check = 1;
+        ra = A * x * x + B * x + C;
+        for (i = 2; i < sqrt(ra); i++)
+        {
+            if (ra % i == 0)
+                check = 0;
+        }
+        if (check == 1)
+        {
+            printf("%d la so nguyen to cua tong A.x^2+B.x+C=%d\n", x, ra);
+            break;
+        }
+        if ((check == 0) && (x == (n - 1)))
+            printf("Khong co gia tri thoa man");
+    }
+}
+
+```
+
+### Bài 18:
+
+- Áp dụng thuật toán đã được học để viết chương trình tính tổng của hai số nguyên lớn,
+  hiển thị dưới mạng mảng và dạng số nguyên.
+- Bài này đã code trên java
+
+### Bài 19:
+
+- Viết chương trình in ra các số nguyên dương x nằm trong khoảng [m,l] sao cho giá trị
+  của biểu thức Ax^2 + Bx + C là một số nguyên tố. Với A,B,C, m,l là các số nguyên nhập từ bàn phím (m<l).
+
+```c
+#include <stdio.h>
+#include <math.h>
+int main()
+{
+    int check, m, l, i, j, ra, x, A, B, C, check2;
+
+    check2 = 0;
+
+    printf("Nhap so m: ");
+    scanf("%d", &m);
+    printf("Nhap so l>m nhe: ");
+    scanf("%d", &l);
+    printf("Nhap A: ");
+    scanf("%d", &A);
+    printf("Nhap B: ");
+    scanf("%d", &B);
+    printf("Nhap C: ");
+    scanf("%d", &C);
+    for (x = m; x <= l; x++)
+    {
+        check = 1;
+        ra = A * x * x + B * x + C;
+        for (i = 2; i < sqrt(ra); i++)
+        {
+            if (ra % i == 0)
+                check = 0;
+        }
+        if (check == 1)
+        {
+            printf("%d la so nguyen to cua tong A.x^2+B.x+C=%d\n", x, ra);
+            check2 = 1;
+        }
+    }
+    if ((check2 == 0) && ((x - 1) == l))
+        printf("Khong co gia tri thoa man");
+}
+```
+
+### Bài 20:
+
+- Viết chương trình in ra các cặp số (A,B) nằm trong khoảng (M,N) sao cho ước số chung
+  lớn nhất của A và B có giá trị là một số D cho trước. Với M,N,D nhập vào từ bàn phím. (0<M,N,D < 1000).
+
+```java
+package ex;
+
+import java.util.*;
+import java.lang.Math;
+
+public class Solution {
+	static Scanner sc = new Scanner(System.in);
+	// Pollard’s Rho Algorithm
+	public static int gcd(int l, int b) {
+		while (b > 0) {
+			int r = l % b;
+			l = b;
+			b = r;
+		}
+		return l;
+	}
+
+	public static void main(String[] args) {
+		int m, n, d;
+		m = sc.nextInt();
+		n = sc.nextInt();
+		d = sc.nextInt();
+
+		for(int i = m; i <= n - d; i++) {
+			for(int j = i + d; j <= n; j+=d) {
+				if(gcd(i, j) == d) {
+					System.out.println(i + "-" + j);
+				}
+			}
+		}
+	}
+}
+```
