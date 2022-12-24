@@ -2007,3 +2007,157 @@ class Solution {
   mod phi(n)
 - Tính bản mã c của thông điệp m, với m = SBD + 123, c = me mod n
 - Giải mã thông điệp, tính m = cd mod n
+
+### Bài 34:
+
+- Cài đặt thuật toán kiểm tra số nguyên tố Fermat. Trong trường hợp số nào thì thuật toán
+  cho kết quả kiểm tra sai.
+
+- REPLY: Trường hợp thuật toán cho kết quả sai, tức là với N là hợp số nhưng lại thỏa mãn định lí nhỏ Fermat: a^(N-1) === 1 mod N, và thuật toán sẽ trả về kết quả PRIME.
+  => Những số N như vậy gọi là số Carmichael.
+  Nếu N là số Carmichael thì thuật toán Fermat có tỉ lệ lỗi rất cao, ngược lại nếu N không phải số Carmichael thì gần như thuật toán sẽ cho kết quả đúng.
+
+```java
+package ex;
+
+import java.util.*;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+
+	/*
+	 * Iterative Function to calculate // (a^n)%p in O(logy)
+	 */
+	// Nhân bình phương có lặp
+	static int power(int a, int n, int p) {
+		// Initialize result
+		int res = 1;
+
+		// Update 'a' if 'a' >= p
+		a = a % p;
+
+		while (n > 0) {
+			// If n is odd, multiply 'a' with result
+			if ((n & 1) == 1)
+				res = (res * a) % p;
+
+			// n must be even now
+			n = n >> 1; // n = n/2
+			a = (a * a) % p;
+		}
+		return res;
+	}
+
+	// If n is prime, then always returns true,
+	// If n is composite than returns false with
+	// high probability Higher value of k increases
+	// probability of correct result
+	// Fermat
+	static boolean isPrime(int n, int k) {
+		// Corner cases
+		if (n <= 1 || n == 4)
+			return false;
+		if (n <= 3)
+			return true;
+
+		// Try k times
+		while (k > 0) {
+			// Pick a random number in [2..n-2]
+			// Above corner cases make sure that n > 4
+			int a = 2 + (int) (Math.random() % (n - 4));
+
+			// Fermat's little theorem
+			if (power(a, n - 1, n) != 1)
+				return false;
+
+			k--;
+		}
+
+		return true;
+	}
+
+	// Driver Program
+	public static void main(String args[]) {
+		System.out.println(isPrime(4, 2));
+	}
+}
+```
+
+### Bài 35:
+
+- Cài đặt thuật toán kiểm tra số nguyên tố Miller-Rabin in ra kết luận về 1 số nguyên
+  dương N nhập vào từ bàn phím với xác suất kết luận tương ứng sau thuật toán.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+using u64 = uint64_t;
+using u128 = __uint128_t;
+
+u64 binpower(u64 base, u64 e, u64 mod)
+{
+    u64 result = 1;
+    base %= mod;
+    while (e)
+    {
+        if (e & 1)
+            result = (u128)result * base % mod;
+        base = (u128)base * base % mod;
+        e >>= 1;
+    }
+    return result;
+}
+
+bool check_composite(u64 n, u64 a, u64 d, int s)
+{
+    u64 x = binpower(a, d, n);
+    if (x == 1 || x == n - 1)
+        return false;
+    for (int r = 1; r < s; r++)
+    {
+        x = (u128)x * x % n;
+        if (x == n - 1)
+            return false;
+    }
+    return true;
+}
+
+bool MillerRabin(u64 n, int iter = 5)
+{ // returns true if n is probably prime, else returns false.
+    if (n < 4)
+        return n == 2 || n == 3;
+
+    int s = 0;
+    u64 d = n - 1;
+    while ((d & 1) == 0)
+    {
+        d >>= 1;
+        s++;
+    }
+
+    for (int i = 0; i < iter; i++)
+    {
+        int a = 2 + rand() % (n - 3);
+        if (check_composite(n, a, d, s))
+            return false;
+    }
+    return true;
+}
+
+int main()
+{
+    u64 n;
+    cin >> n;
+    if (MillerRabin(n))
+    {
+        cout << "PRIME" << endl;
+    }
+    else
+    {
+        cout << "COMPOSITE" << endl;
+    }
+    system("pause");
+    return 0;
+}
+```

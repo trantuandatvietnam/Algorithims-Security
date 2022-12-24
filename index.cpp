@@ -1,83 +1,71 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int isPrime(int n)
-{
-    if (n <= 3)
-        return n > 1;
-    if (n % 2 == 0 || n % 3 == 0)
-        return 0;
-    for (int i = 5; i * i <= n; i += 6)
-        if (n % i == 0 || n % (i + 2) == 0)
-            return 0;
-    return 1;
-}
+using u64 = uint64_t;
+using u128 = __uint128_t;
 
-int gcd(int a, int b)
+u64 binpower(u64 base, u64 e, u64 mod)
 {
-    while (b)
+    u64 result = 1;
+    base %= mod;
+    while (e)
     {
-        int r = a % b;
-        a = b;
-        b = r;
+        if (e & 1)
+            result = (u128)result * base % mod;
+        base = (u128)base * base % mod;
+        e >>= 1;
     }
-    return a;
+    return result;
 }
 
-int modPower(int a, int b, int m)
+bool check_composite(u64 n, u64 a, u64 d, int s)
 {
-    a %= m;
-    int res = 1;
-    while (b > 0)
-    {
-        if (b % 2)
-            res = res * a % m;
-        a = a * a % m;
-        b /= 2;
-    }
-    return res;
-}
-
-bool isCarmichaelNumber(int n)
-{
-    if (isPrime(n))
-    {
+    u64 x = binpower(a, d, n);
+    if (x == 1 || x == n - 1)
         return false;
-    }
-    else
+    for (int r = 1; r < s; r++)
     {
-        bool flag = false;
-        for (int b = 2; b < n; b++)
-        {
-            if (gcd(b, n) == 1)
-            {
-                if (modPower(b, n - 1, n) == 1)
-                {
-                    flag = true;
-                }
-                else
-                {
-                    flag = false;
-                    break;
-                }
-            }
-        }
-        return flag;
+        x = (u128)x * x % n;
+        if (x == n - 1)
+            return false;
     }
+    return true;
+}
+
+bool MillerRabin(u64 n, int iter = 5)
+{ // returns true if n is probably prime, else returns false.
+    if (n < 4)
+        return n == 2 || n == 3;
+
+    int s = 0;
+    u64 d = n - 1;
+    while ((d & 1) == 0)
+    {
+        d >>= 1;
+        s++;
+    }
+
+    for (int i = 0; i < iter; i++)
+    {
+        int a = 2 + rand() % (n - 3);
+        if (check_composite(n, a, d, s))
+            return false;
+    }
+    return true;
 }
 
 int main()
 {
-    int n;
+    u64 n;
     cin >> n;
-    for (int i = 4; i < n; i++)
+    if (MillerRabin(n))
     {
-        if (isCarmichaelNumber(i))
-        {
-            cout << i << " ";
-        }
+        cout << "PRIME" << endl;
     }
-    cout << endl;
+    else
+    {
+        cout << "COMPOSITE" << endl;
+    }
     system("pause");
     return 0;
 }
