@@ -1,37 +1,30 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <math.h>
 int main()
 {
-    int a, b, m, n, d, last, i, j, count;
-    printf("Nhap m ");
-    scanf("%d", &m);
-    printf("Nhap n ");
+    int n, i, j, k, flag;
+    printf("\nNhap n: ");
     scanf("%d", &n);
-    printf("Nhap d ");
-    scanf("%d", &d);
-    if (d > n)
-        printf("Khong ton tai");
-    a = b = j = 0;
-    last = n / d;
-
-    for (i = 2; i <= last; i++)
+    int A[n];
+    for (i = 4; i < n; i++)
     {
-        a = d;
-        b = d * i;
-        printf("Cap so %d %d\n", a, b);
-    }
-
-    for (i = 2; i <= last; i++)
-    {
-        a = d * i;
-        if ((a > m) && (a < n))
+        A[i] = 0;
+        for (j = 2; j < i; j++)
         {
-            for (j = 1; j <= last; j++)
+            flag = 0;
+            for (k = 2; k < j; k++)
+                if (j % k == 0)
+                    flag == 1;
+            if (flag != 1 && A[i] == 0) // j la so nguyen to
             {
-                b = d * j;
-                if ((b < n) && (j % i != 0))
-                    printf("Cap so %d %d\n", a, b);
+                if (i % (j * j) == 0)
+                    A[i] = 1;
             }
         }
+    }
+    for (i = 4; i < n; i++)
+    {
+        if (A[i] == 1)
+            printf(" %d ", i);
     }
 }

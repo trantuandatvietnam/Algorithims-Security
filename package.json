@@ -1,0 +1,26 @@
+{
+  "name": "thuat-toan-attt",
+  "version": "1.0.0",
+  "description": "```c\r #include <stdio.h>\r #include <stdbool.h>\r #include<math.h>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trantuandatvietnam/Thu-t-To-n-ATTT.git"
+  },
+  "keywords": [
+    "algorithms",
+    "sercurity"
+  ],
+  "author": "tran tuan dat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trantuandatvietnam/Thu-t-To-n-ATTT/issues"
+  },
+  "homepage": "https://github.com/trantuandatvietnam/Thu-t-To-n-ATTT#readme",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}

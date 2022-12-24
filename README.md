@@ -956,6 +956,7 @@ import java.lang.Math;
 
 public class Solution {
 	static Scanner sc = new Scanner(System.in);
+
 	// Pollard’s Rho Algorithm
 	public static int gcd(int l, int b) {
 		while (b > 0) {
@@ -972,13 +973,513 @@ public class Solution {
 		n = sc.nextInt();
 		d = sc.nextInt();
 
-		for(int i = m; i <= n - d; i++) {
-			for(int j = i + d; j <= n; j+=d) {
-				if(gcd(i, j) == d) {
+		for (int i = m; i <= n - d; i++) {
+			for (int j = i + d; j <= n; j += d) {
+				if (i % d != 0)
+					break;
+				if (gcd(i, j) == d) {
 					System.out.println(i + "-" + j);
 				}
 			}
 		}
 	}
+}
+```
+
+### Bài 21:
+
+- Một số gọi là siêu số nguyên tố nếu số lượng các số nguyên tố từ 1 đến X (ngoại trừ X) là
+  một số nguyên tố. Hãy viết chương trình đếm số lượng các siêu số nguyên tố này trong khoảng
+  [A,B] cho trước nhập từ bàn phím.
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkPrime(int n)
+{
+    int i;
+    if (n < 2)
+        return false;
+    if (n == 2 || n == 3)
+        return true;
+    if (n % 2 == 0 || n % 3 == 0)
+        return false;
+    for (i = 5; i * i < n; i = i + 6)
+    {
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+        return true;
+    }
+}
+int main()
+{
+    int a, b, i, j;
+    printf("Nhap a: ");
+    scanf("%d", &a);
+    printf("\nNhap b: ");
+    scanf("%d", &b);
+    int count = 0;
+    // duyệt các số siêu nguyên tố từ A đến B
+    for (i = a; i <= b; i++)
+    {
+        int prime_count = 0;
+
+        // tính số lượng số nguyên tố , j < i để k bao gồm số i
+        for (j = 1; j < i; j++)
+        {
+            if (checkPrime(j))
+                prime_count++;
+        }
+
+        if (checkPrime(prime_count))
+            count++;
+    }
+    printf("So luong so sieu  nguyen to trong khoang [%d,%d] la: %d\n", a, b, count);
+    return 0;
+}
+```
+
+### Bài 22:
+
+- Với một số nguyên dương N thoả mãn 0<N<10000, đặt:
+  F ( N ) = N nếu N là một số nguyên tố
+  F ( N ) = 0 nếu là hợp số
+  Cho L và R nhập vào từ bàn phím, với mọi cặp i , j trong khoảng [ L , R ] hãy viết chương trình
+  in ra màn hình giá trị tổng của F ( i ) \* F ( j ) với j > i.
+
+```java
+package ex;
+
+import java.io.*;
+import java.math.*;
+import java.util.Scanner;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+
+	/*
+	 * Iterative Function to calculate // (a^n)%p in O(logy)
+	 */
+	// Nhân bình phương có lặp
+	static int power(int a, int n, int p) {
+		// Initialize result
+		int res = 1;
+
+		// Update 'a' if 'a' >= p
+		a = a % p;
+
+		while (n > 0) {
+			// If n is odd, multiply 'a' with result
+			if ((n & 1) == 1)
+				res = (res * a) % p;
+
+			// n must be even now
+			n = n >> 1; // n = n/2
+			a = (a * a) % p;
+		}
+		return res;
+	}
+
+	// If n is prime, then always returns true,
+	// If n is composite than returns false with
+	// high probability Higher value of k increases
+	// probability of correct result
+	// Fermat
+	static boolean isPrime(int n, int k) {
+		// Corner cases
+		if (n <= 1 || n == 4)
+			return false;
+		if (n <= 3)
+			return true;
+
+		// Try k times
+		while (k > 0) {
+			// Pick a random number in [2..n-2]
+			// Above corner cases make sure that n > 4
+			int a = 2 + (int) (Math.random() % (n - 4));
+
+			// Fermat's little theorem
+			if (power(a, n - 1, n) != 1)
+				return false;
+
+			k--;
+		}
+
+		return true;
+	}
+
+	public static int calcFermat(int n, int k) {
+		if (isPrime(n, k)) {
+			return n;
+		}
+		return 0;
+	}
+
+	// Driver Program
+	public static void main(String args[]) {
+		// safety parameter ( >= 1, init 3)
+		int k = 3;
+		int l = sc.nextInt();
+		int r = sc.nextInt();
+		int sum = 0;
+		for (int i = l; i < r; i++) {
+			for (int j = i + 1; j <= r; j++) {
+				if (j > i) {
+					System.out.println(
+							"F[" + i + "] *" + " F[" + j + "] = " + calcFermat(i, k) + " + " + calcFermat(j, k));
+					sum += calcFermat(i, k) * calcFermat(j, k);
+				}
+			}
+		}
+		System.out.println("Sum: " + sum);
+	}
+}
+```
+
+### Bài 23:
+
+- Viết chương trình in ra màn hình YES trong trường hợp tổng của các số nguyên tố trong
+  khoảng [A, B] là cũng là một số nguyên tố và NO nếu ngược lại. Với A,B là hai số được nhập vào
+  từ bàn phím.
+
+```java
+package ex;
+
+import java.util.*;
+import java.lang.Math;
+
+public class Solution {
+	public static void fillPrime(ArrayList<Integer> chprime, int high) {
+		boolean[] ck = new boolean[high + 1];
+		Arrays.fill(ck, true);
+		ck[1] = false;
+		ck[0] = false;
+
+		for (int i = 2; (i * i) <= high; i++) {
+			if (ck[i] == true) {
+				for (int j = i * i; j <= Math.sqrt(high); j = j + i) {
+					ck[j] = false;
+				}
+			}
+		}
+		for (int i = 2; i * i <= high; i++) {
+			if (ck[i] == true) {
+				chprime.add(i);
+			}
+		}
+	}
+
+	static boolean isPrime(int n) {
+		// Corner cases
+		if (n <= 1)
+			return false;
+		if (n <= 3)
+			return true;
+
+		// This is checked so that we can skip
+		// middle five numbers in below loop
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+		// all prime number has format: 6k +- 1, exclude 2, 3
+		for (int i = 5; i * i <= n; i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	public static void segmentedSieve(int low, int high) {
+		ArrayList<Integer> chprime = new ArrayList<Integer>();
+		fillPrime(chprime, high);
+		boolean[] prime = new boolean[high - low + 1];
+		Arrays.fill(prime, true);
+		for (int i : chprime) {
+			int lower = (low / i);
+			if (lower <= 1) {
+				lower = i + i;
+			} else if (low % i != 0) {
+				lower = (lower * i) + i;
+			} else {
+				lower = (lower * i);
+			}
+			for (int j = lower; j <= high; j = j + i) {
+				prime[j - low] = false;
+			}
+		}
+		int sum = 0;
+		for (int i = low; i <= high; i++) {
+			if (prime[i - low] == true) {
+				sum += i;
+			}
+		}
+		if(isPrime(sum)) {
+			System.out.println("YES");
+			return;
+		}
+		System.out.println("NO");
+	}
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int left = sc.nextInt();
+		int right = sc.nextInt();
+		segmentedSieve(left, right);
+	}
+}
+```
+
+### Bài 24:
+
+- Đặt S1, S2 là các mảng chứa giá trị bình phương của các số nguyên. Hãy viết chương
+  trình in ra số lượng tất cả các số nguyên tố nằm trong khoảng [a,b] sao cho số này cũng là tổng
+  của hai số x và y với x thuộc S1 và y thuộc S2. Trong đó, a,b là các số được nhập từ bàn phím
+  Ví dụ: với a=10, b =15, in ra giá trị là 1 vì trong khoảng [10,15] chỉ có 2 số nguyên tố 11 và 13,
+  nhưng chỉ có 13 = 2^2 + 3^2=4+9.
+
+```java
+package ex;
+
+import java.util.*;
+import java.lang.Math;
+
+public class Solution {
+	public static void fillPrime(ArrayList<Integer> chprime, int high) {
+		boolean[] ck = new boolean[high + 1];
+		Arrays.fill(ck, true);
+		ck[1] = false;
+		ck[0] = false;
+
+		for (int i = 2; (i * i) <= high; i++) {
+			if (ck[i] == true) {
+				for (int j = i * i; j <= Math.sqrt(high); j = j + i) {
+					ck[j] = false;
+				}
+			}
+		}
+		for (int i = 2; i * i <= high; i++) {
+			if (ck[i] == true) {
+				chprime.add(i);
+			}
+		}
+	}
+
+	static boolean isPrime(int n) {
+		// Corner cases
+		if (n <= 1)
+			return false;
+		if (n <= 3)
+			return true;
+
+		// This is checked so that we can skip
+		// middle five numbers in below loop
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+		// all prime number has format: 6k +- 1, exclude 2, 3
+		for (int i = 5; i * i <= n; i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	public static boolean checkExponential(ArrayList<Integer> s1, ArrayList<Integer> s2, int sum) {
+		for(int i = 0; i < s1.size() - 1; i++) {
+			for(int j = i; j < s1.size(); j++) {
+				if(s1.get(i) + s2.get(j) == sum) {
+					System.out.println(sum + " = " + s1.get(i) + " + " + s1.get(j));
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static void segmentedSieve(int low, int high) {
+		ArrayList<Integer> chprime = new ArrayList<Integer>();
+		fillPrime(chprime, high);
+		ArrayList<Integer> s1 = new ArrayList<>();
+		ArrayList<Integer> s2 = new ArrayList<>();
+		for(int i = 1; i <= Math.sqrt(high); i++) {
+			s1.add(i * i);
+		}
+		s2 = (ArrayList<Integer>)s1.clone();
+
+		boolean[] prime = new boolean[high - low + 1];
+		Arrays.fill(prime, true);
+		for (int i : chprime) {
+			int lower = (low / i);
+			if (lower <= 1) {
+				lower = i + i;
+			} else if (low % i != 0) {
+				lower = (lower * i) + i;
+			} else {
+				lower = (lower * i);
+			}
+			for (int j = lower; j <= high; j = j + i) {
+				prime[j - low] = false;
+			}
+		}
+		int count = 0;
+		for (int i = low; i <= high; i++) {
+			if (prime[i - low] == true) {
+				if(checkExponential(s1, s2, i)) {
+					count++;
+				}
+			}
+		}
+		System.out.println("Count: " + count);
+	}
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int a = sc.nextInt();
+		int b = sc.nextInt();
+		segmentedSieve(a, b);
+	}
+}
+```
+
+### Bài 25:
+
+- Cho 2 số M và N thoả mãn điều kiện: 1<=N<=10000; 2<M<=100; Hãy viết chương trình
+  xác định xem số N có thể được phân tích thành tổng của M số nguyên tố hay không? Nếu có thì in
+  ra các số đó.
+
+- Ý tưởng thuật toán:
+
+  - B1: Sử dụng thuật toán sàng nguyên tố để lấy ra tất cả các số nguyên tố từ 1 - n
+  - B2: Sử dụng thuật toán để lấy tất cả các mảng con chứa m phần tử trong mảng được lấy từ B1
+  - B3: Kiểm tra nếu n được phân tách bởi tổng của các số nguyên tố trong từng mảng con ở bước 2
+
+- Minh họa thuật toán ở B2
+
+![B2](./imgs/Print-All-Combinations-of-subset-of-size-K-from-Given-Array-1.webp)
+
+```js
+const prompt = require("prompt-sync")();
+function sangEratosthenes(n) {
+  let check = new Array(n + 1).fill(true);
+  for (let i = 2; i <= n; i++) {
+    if (check[i] == true) {
+      for (let j = 2 * i; j <= n; j += i) {
+        check[j] = false;
+      }
+    }
+  }
+  let result = [];
+  for (let i = 2; i <= n; i++) {
+    if (check[i]) {
+      result.push(i);
+      1;
+    }
+  }
+  return result;
+}
+
+function subArr(arr, k, start, currlen, B, n) {
+  if (currlen === k) {
+    let a = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (B[i] === true) {
+        a.push(arr[i]);
+      }
+    }
+    if (sum(a) === n) {
+      console.log(a);
+    }
+    return;
+  }
+  if (start === arr.length) {
+    return;
+  }
+  B[start] = true;
+  subArr(arr, k, start + 1, currlen + 1, B, n);
+
+  B[start] = false;
+  subArr(arr, k, start + 1, currlen, B, n);
+}
+
+function sum(arr) {
+  return arr.reduce((a, b) => a + b, 0);
+}
+
+function run() {
+  const n = prompt("Enter n: ");
+  const m = prompt("Enter m: ");
+  const arr = sangEratosthenes(+n);
+  let B = new Array(arr.length).fill(false);
+  subArr(arr, +m, 0, 0, B, +n);
+}
+
+run();
+```
+
+### Bài 26:
+
+- Một số được gọi là số mạnh mẽ khi nó đồng thời vừa chia hết cho số nguyên tố và chia
+  hết cho bình phương của số nguyên tố đó. Tìm số mạnh mẽ nhỏ hơn số N cho trước (N < 10000).
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+int isPrime(int n)
+{
+    // Check if n=1 or n=0
+    if (n <= 1)
+        return 0;
+    // Check if n=2 or n=3
+    if (n == 2 || n == 3)
+        return 1;
+    // Check whether n is divisible by 2 or 3
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    // Check from 5 to square root of n
+    // Iterate i by (i+6)
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+
+    return 1;
+}
+
+bool check(int n)
+{
+    for (int i = 1; i <= sqrt(n); i++)
+    {
+        if (n % i == 0)
+        {
+            if (n / i == i)
+            {
+                if (isPrime(i) == 1 && n % (i * i) == 0)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if ((isPrime(i) == 1 && n % (i * i) == 0) || (isPrime((n / i)) == 1) && n % ((n / i) * (n / i)) == 0)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+int main()
+{
+    int n;
+    scanf("%d", &n);
+    for (int i = 1; i < n; i++)
+    {
+        if (check(i))
+        {
+            printf("%d ", i);
+        }
+    }
+    return 0;
 }
 ```
