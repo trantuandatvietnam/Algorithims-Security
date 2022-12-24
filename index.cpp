@@ -1,52 +1,83 @@
-#include <stdio.h>
-#include <stdbool.h>
+#include <bits/stdc++.h>
+using namespace std;
 
-// Generate all prime numbers less than n.
-bool SieveOfEratosthenes(int n, bool isPrime[])
+int isPrime(int n)
 {
-    // Initialize all entries of boolean array as true. A
-    // value in isPrime[i] will finally be false if i is Not
-    // a prime, else true bool isPrime[n+1];
-    isPrime[0] = isPrime[1] = false;
-    for (int i = 2; i <= n; i++)
-        isPrime[i] = true;
+    if (n <= 3)
+        return n > 1;
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    for (int i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+    return 1;
+}
 
-    for (int p = 2; p * p <= n; p++)
+int gcd(int a, int b)
+{
+    while (b)
     {
-        // If isPrime[p] is not changed, then it is a prime
-        if (isPrime[p] == true)
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+int modPower(int a, int b, int m)
+{
+    a %= m;
+    int res = 1;
+    while (b > 0)
+    {
+        if (b % 2)
+            res = res * a % m;
+        a = a * a % m;
+        b /= 2;
+    }
+    return res;
+}
+
+bool isCarmichaelNumber(int n)
+{
+    if (isPrime(n))
+    {
+        return false;
+    }
+    else
+    {
+        bool flag = false;
+        for (int b = 2; b < n; b++)
         {
-            // Update all multiples of p
-            for (int i = p * p; i <= n; i += p)
-                isPrime[i] = false;
+            if (gcd(b, n) == 1)
+            {
+                if (modPower(b, n - 1, n) == 1)
+                {
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                    break;
+                }
+            }
         }
+        return flag;
     }
 }
 
-// Prints a prime pair with given sum
-void findPrimePair(int n)
-{
-    // Generating primes using Sieve
-    bool isPrime[n + 1];
-    SieveOfEratosthenes(n, isPrime);
-
-    // Traversing all numbers to find first
-    // pair
-    for (int i = 0; i < n; i++)
-    {
-        if (isPrime[i] && isPrime[n - i])
-        {
-            printf("%d  %d", i, n - i);
-            return;
-        }
-    }
-}
-
-// Driven program
 int main()
 {
     int n;
-    scanf("%d", &n);
-    findPrimePair(n);
+    cin >> n;
+    for (int i = 4; i < n; i++)
+    {
+        if (isCarmichaelNumber(i))
+        {
+            cout << i << " ";
+        }
+    }
+    cout << endl;
+    system("pause");
     return 0;
 }

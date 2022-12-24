@@ -1,5 +1,7 @@
 # Thuật toán trong an toàn thông tin
 
+### NOTE: List được tổng hợp từ nhiều nguồn tài liệu và code by Trần Tuấn Đạt KMA
+
 ### Bài 1 Một số gọi là Q-prime khi nó có đúng 4 ước số nguyên dương. Hãy viết chương trình in ra các số Q-Prime nhỏ hơn hoặc bằng một số N cho trước nhập từ bàn phím.
 
 ```c
@@ -977,7 +979,6 @@ import java.lang.Math;
 public class Solution {
 	static Scanner sc = new Scanner(System.in);
 
-	// Pollard’s Rho Algorithm
 	public static int gcd(int l, int b) {
 		while (b > 0) {
 			int r = l % b;
@@ -993,8 +994,8 @@ public class Solution {
 		n = sc.nextInt();
 		d = sc.nextInt();
 
-		for (int i = m; i <= n - d; i++) {
-			for (int j = i + d; j <= n; j += d) {
+		for (int i = m + 1; i < n - d; i++) {
+			for (int j = i + d; j < n; j += d) {
 				if (i % d != 0)
 					break;
 				if (gcd(i, j) == d) {
@@ -1501,5 +1502,454 @@ int main()
         }
     }
     return 0;
+}
+```
+
+# **Phần 2: Phần nâng cao**
+
+### Bài 27
+
+- Viết chương trình in ra các cặp số (a,b) thoả mãn điều kiện 0<a,b<1000, sao cho ước
+  chung lớn nhất của 2 số đó là một số nguyên tố.
+
+```c
+#include <stdio.h>
+#include <math.h>
+int gcd(int l, int b)
+{
+    while (b > 0)
+    {
+        int r = l % b;
+        l = b;
+        b = r;
+    }
+    return l;
+}
+
+int isPrime(int n)
+{
+    // Check if n=1 or n=0
+    if (n <= 1)
+        return 0;
+    // Check if n=2 or n=3
+    if (n == 2 || n == 3)
+        return 1;
+    // Check whether n is divisible by 2 or 3
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    // Check from 5 to square root of n
+    // Iterate i by (i+6)
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+
+    return 1;
+}
+
+int main()
+{
+    int a = 1, b = 9;
+    int i, j;
+    for (i = a; i < b; i++)
+    {
+        for (j = a; j < b; j++)
+        {
+            int d = gcd(i, j);
+            if (isPrime(d) == 1)
+            {
+                printf("[%d %d]\n", i, j);
+            }
+        }
+    }
+}
+```
+
+### Bài 28:
+
+- Viết chương trình tìm các số Carmichael (là các số giả nguyên tố n thoả mãn điều kiện là
+  hợp số và thoả mãn b^(n−1) ≡ 1 (mod n) với mọi số nguyên dương b nguyên tố cùng nhau với n) nhỏ hơn một số N cho trước nhập vào từ bàn phím (với điều kiện 0 ≤ N ≤ 10000.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int isPrime(int n)
+{
+    if (n <= 3)
+        return n > 1;
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    for (int i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+    return 1;
+}
+
+int gcd(int a, int b)
+{
+    while (b)
+    {
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+int modPower(int a, int b, int m)
+{
+    a %= m;
+    int res = 1;
+    while (b > 0)
+    {
+        if (b % 2)
+            res = res * a % m;
+        a = a * a % m;
+        b /= 2;
+    }
+    return res;
+}
+
+bool isCarmichaelNumber(int n)
+{
+    if (isPrime(n))
+    {
+        return false;
+    }
+    else
+    {
+        bool flag = false;
+        for (int b = 2; b < n; b++)
+        {
+            if (gcd(b, n) == 1)
+            {
+                if (modPower(b, n - 1, n) == 1)
+                {
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    for (int i = 4; i < n; i++)
+    {
+        if (isCarmichaelNumber(i))
+        {
+            cout << i << " ";
+        }
+    }
+    cout << endl;
+    system("pause");
+    return 0;
+}
+```
+
+### Bài 29:
+
+- Viết chương trình đếm số các số Carmichael (là các số giả nguyên tố n thoả mãn điều kiện là hợp số và thoả mãn b^(n−1) ≡ 1 (mod n) với mọi số nguyên dương b nguyên tố cùng nhau với n) nhỏ hơn một số N cho trước nhập vào từ bàn phím (với điều kiện 0 ≤ N ≤ 10000.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int isPrime(int n)
+{
+    if (n <= 3)
+        return n > 1;
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    for (int i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+    return 1;
+}
+
+int gcd(int a, int b)
+{
+    while (b)
+    {
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+int modPower(int a, int b, int m)
+{
+    a %= m;
+    int res = 1;
+    while (b > 0)
+    {
+        if (b % 2)
+            res = res * a % m;
+        a = a * a % m;
+        b /= 2;
+    }
+    return res;
+}
+
+bool isCarmichaelNumber(int n)
+{
+    if (isPrime(n))
+    {
+        return false;
+    }
+    else
+    {
+        bool flag = false;
+        for (int b = 2; b < n; b++)
+        {
+            if (gcd(b, n) == 1)
+            {
+                if (modPower(b, n - 1, n) == 1)
+                {
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    int count = 0;
+    for (int i = 4; i < n; i++)
+    {
+        if (isCarmichaelNumber(i))
+        {
+            count++;
+        }
+    }
+    cout << count;
+    cout << endl;
+    system("pause");
+    return 0;
+}
+```
+
+### Bài 30:
+
+- Viết chương trình tính tổng của các số Carmichael (là các số giả nguyên tố n thoả mãn
+  điều kiện là hợp số và thoả mãn b^(n−1) ≡ 1 (mod n) với mọi số nguyên dương b nguyên tố cùng nhau với n) nhỏ hơn một số N cho trước nhập vào từ bàn phím (với điều kiện 0 ≤ N ≤ 10000.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int isPrime(int n)
+{
+    if (n <= 3)
+        return n > 1;
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+    for (int i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+    return 1;
+}
+
+int gcd(int a, int b)
+{
+    while (b)
+    {
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+int modPower(int a, int b, int m)
+{
+    a %= m;
+    int res = 1;
+    while (b > 0)
+    {
+        if (b % 2)
+            res = res * a % m;
+        a = a * a % m;
+        b /= 2;
+    }
+    return res;
+}
+
+bool isCarmichaelNumber(int n)
+{
+    if (isPrime(n))
+    {
+        return false;
+    }
+    else
+    {
+        bool flag = false;
+        for (int b = 2; b < n; b++)
+        {
+            if (gcd(b, n) == 1)
+            {
+                if (modPower(b, n - 1, n) == 1)
+                {
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    int sum = 0;
+    for (int i = 4; i < n; i++)
+    {
+        if (isCarmichaelNumber(i))
+        {
+            sum+= i;
+        }
+    }
+    cout << sum;
+    cout << endl;
+    system("pause");
+    return 0;
+}
+```
+
+### Bài 31:
+
+- Áp dụng theo các thuật toán đã được học trong phần lí thuyết em hãy cài đặt chương
+  trình:
+- Tìm số nguyên tố k gần nhất với phần số của mã số sinh viên của mình (trong trường hợp
+  khoảng cách bằng nhau thì lấy số nhỏ hơn).
+- Từ số k tìm được tính a^k mod n với a = SBD, n = 123456.
+
+```java
+package ex;
+
+import java.util.*;
+
+class Solution {
+
+	static int MAX = 1000000;
+	static Scanner sc = new Scanner(System.in);
+// array to store all primes less than 10^6
+	static ArrayList<Integer> primes = new ArrayList<Integer>();
+
+// Utility function of Sieve of Sundaram
+	static void Sieve() {
+		int n = MAX;
+
+		// In general Sieve of Sundaram, produces primes
+		// smaller than (2*x + 2) for a number given
+		// number x
+		int nNew = (int) Math.sqrt(n);
+
+		// This array is used to separate numbers of the
+		// form i+j+2ij from others where 1 <= i <= j
+		int[] marked = new int[n / 2 + 500];
+
+		// eliminate indexes which does not produce primes
+		for (int i = 1; i <= (nNew - 1) / 2; i++)
+			for (int j = (i * (i + 1)) << 1; j <= n / 2; j = j + 2 * i + 1)
+				marked[j] = 1;
+
+		// Since 2 is a prime number
+		primes.add(2);
+
+		// Remaining primes are of the form 2*i + 1 such
+		// that marked[i] is false.
+		for (int i = 1; i <= n / 2; i++)
+			if (marked[i] == 0)
+				primes.add(2 * i + 1);
+	}
+
+// modified binary search to find nearest prime less than N
+	static int binarySearch(int left, int right, int n) {
+		if (left <= right) {
+			int mid = (left + right) / 2;
+
+			// base condition is, if we are reaching at left
+			// corner or right corner of primes[] array then
+			// return that corner element because before or
+			// after that we don't have any prime number in
+			// primes array
+			if (mid == 0 || mid == primes.size() - 1)
+				return primes.get(mid);
+
+			// now if n is itself a prime so it will be present
+			// in primes array and here we have to find nearest
+			// prime less than n so we will return primes[mid-1]
+			if (primes.get(mid) == n)
+				return primes.get(mid - 1);
+
+			// now if primes[mid]<n and primes[mid+1]>n that
+			// mean we reached at nearest prime
+			if (primes.get(mid) < n && primes.get(mid + 1) > n)
+				return primes.get(mid);
+			if (n < primes.get(mid))
+				return binarySearch(left, mid - 1, n);
+			else
+				return binarySearch(mid + 1, right, n);
+		}
+		return 0;
+	}
+
+	static int power(int a, int n, int p) {
+		// Initialize result
+		int res = 1;
+
+		// Update 'a' if 'a' >= p
+		a = a % p;
+
+		while (n > 0) {
+			// If n is odd, multiply 'a' with result
+			if ((n & 1) == 1)
+				res = (res * a) % p;
+
+			// n must be even now
+			n = n >> 1; // n = n/2
+			a = (a * a) % p;
+		}
+		return res;
+	}
+
+// Driver code
+	public static void main(String[] args) {
+		Sieve();
+		int mod = 123456;
+
+		int n = sc.nextInt();
+		int primeLessThan = binarySearch(0, primes.size() - 1, n);
+		int k = (primeLessThan - 1) / 6;
+		int primeGatherThan = 6 * (k + 1) + 1;
+		int m = Math.abs(primeGatherThan - n) > Math.abs(primeLessThan - n) ? primeLessThan : primeGatherThan;
+		// calc n^m mod (mod)
+		System.out.println(power(n, m, mod));
+	}
 }
 ```

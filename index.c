@@ -2,29 +2,46 @@
 #include <math.h>
 int main()
 {
-    int n, i, j, k, flag;
-    printf("\nNhap n: ");
-    scanf("%d", &n);
-    int A[n];
-    for (i = 4; i < n; i++)
+    int x, n;
+    printf("Nhap x: ");
+    scanf("%d", &x);
+    for (n = 4; n <= x; n++)
     {
-        A[i] = 0;
-        for (j = 2; j < i; j++)
+        int m, i, j, dem, a[10], b[10], permission = 0;
+        j = 0;
+        int check = 1;
+        m = n;
+        for (i = 2; i <= m; i++)
         {
-            flag = 0;
-            for (k = 2; k < j; k++)
-                if (j % k == 0)
-                    flag == 1;
-            if (flag != 1 && A[i] == 0) // j la so nguyen to
+            dem = 0;
+            while ((m % i) == 0)
             {
-                if (i % (j * j) == 0)
-                    A[i] = 1;
+                m /= i;
+                dem++;
+            }
+            if (dem >= 1)
+            {
+                a[j] = i;
+                b[j] = dem;
+                if (b[j] >= 2)
+                    check = 0;
+                j++;
             }
         }
-    }
-    for (i = 4; i < n; i++)
-    {
-        if (A[i] == 1)
-            printf(" %d ", i);
+        if ((check == 0) | (j < 3))
+        {
+            permission = 1;
+        }
+        for (i = 0; i <= j - 1; i++)
+        {
+            if (((n % a[i]) == 0) && ((n - 1) % (a[i] - 1) != 0))
+            {
+                permission = 1;
+            }
+            else if ((n % a[i]) == 0 && ((n - 1) % (a[i] - 1) == 0) && check != 0 && permission != 1)
+                permission = 0;
+        }
+        if (permission == 0 && check != 0)
+            printf(" %d ", n);
     }
 }
