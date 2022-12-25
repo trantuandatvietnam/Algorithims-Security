@@ -1237,7 +1237,7 @@ public class Solution {
 				prime[j - low] = false;
 			}
 		}
-		int sum = 0;
+		long sum = 0;
 		for (int i = low; i <= high; i++) {
 			if (prime[i - low] == true) {
 				sum += i;
@@ -1564,7 +1564,7 @@ int main()
     int i, j;
     for (i = a; i < b; i++)
     {
-        for (j = a; j < b; j++)
+        for (j = i; j < b; j++)
         {
             int d = gcd(i, j);
             if (isPrime(d) == 1)
@@ -1608,10 +1608,10 @@ int gcd(int a, int b)
     return a;
 }
 
-int modPower(int a, int b, int m)
+long modPower(int a, int b, int m)
 {
     a %= m;
-    int res = 1;
+    long res = 1;
     while (b > 0)
     {
         if (b % 2)
@@ -1698,10 +1698,10 @@ int gcd(int a, int b)
     return a;
 }
 
-int modPower(int a, int b, int m)
+long modPower(int a, int b, int m)
 {
     a %= m;
-    int res = 1;
+    long res = 1;
     while (b > 0)
     {
         if (b % 2)
@@ -1791,10 +1791,10 @@ int gcd(int a, int b)
     return a;
 }
 
-int modPower(int a, int b, int m)
+long modPower(int a, int b, int m)
 {
     a %= m;
-    int res = 1;
+    long res = 1;
     while (b > 0)
     {
         if (b % 2)
@@ -1837,7 +1837,7 @@ int main()
 {
     int n;
     cin >> n;
-    int sum = 0;
+    long sum = 0;
     for (int i = 4; i < n; i++)
     {
         if (isCarmichaelNumber(i))
@@ -1945,7 +1945,7 @@ import java.util.Scanner;
 public class Solution {
 
     static Scanner scanner = new Scanner(System.in);
-
+    // Nhân bình phương có lặp
     public static long power(long a,long k,long n) {
         long b = 1;
         a = a % n;
@@ -2037,11 +2037,6 @@ public class Solution {
 
     public static void main(String[] args) {
         int p,q,SBD;
-        // nhap p
-        // do {
-        //     System.out.println("nhap so p thoa man q > 100 va la so nguyen to : ");
-        //     p = scanner.nextInt();
-        // } while (isPrime(p));
         System.out.println("nhap so p : ");
         p = scanner.nextInt();
         while (!isPrime(p)) {
@@ -2104,7 +2099,7 @@ class Solution {
 	 * Iterative Function to calculate // (a^n)%p in O(logy)
 	 */
 	// Nhân bình phương có lặp
-	static long power(int a, int n, int p) {
+	static long power(long a, long n, long p) {
 		// Initialize result
 		long res = 1;
 
@@ -2682,7 +2677,7 @@ class Solution {
 	}
 
 	// Nhân bình phương có lặp
-		static long power(int a, int n, int p) {
+		static long power(long a, long n, long p) {
 			// Initialize result
 			long res = 1;
 
