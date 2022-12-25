@@ -2008,6 +2008,152 @@ class Solution {
 - Tính bản mã c của thông điệp m, với m = SBD + 123, c = me mod n
 - Giải mã thông điệp, tính m = cd mod n
 
+```java
+package ex;
+
+import java.util.Scanner;
+
+public class Solution {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    public static long power(long a,long k,long n) {
+        long b = 1;
+        a = a % n;
+        while (k > 0) {
+            if (k % 2 == 1) {
+                b = (b * a) % n;
+            }
+            k = k / 2;
+            a = (a*a) % n;
+        }
+        return b;
+    }
+
+    public static int gcd(int a, int b) {
+        int r;
+        while (b > 0) {
+            r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
+    }
+
+    public static Boolean isPrime(int n) {
+        if (n <= 1) {
+            return false;
+        }
+        if (n == 2 || n == 3) {
+            return true;
+        }
+        if (n % 2 == 0 || n % 3 == 0) {
+            return false;
+        }
+
+        for (int i = 5; i <= Math.sqrt(n); i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int extend_Euclide(int e, int epN) {
+        int x2 = 1, x1 = 0, y2 = 0, y1 = 1;
+        int a = e,b = epN;
+        while (b > 0) {
+            // 𝑞 ← 𝑎/𝑏 , 𝑟 ← 𝑎 − 𝑞𝑏, 𝑥 ← 𝑥2 − 𝑞𝑥1 , 𝑦 ← 𝑦2 − 𝑞𝑦1
+            int q = a / b;
+            int r = a % b;
+            int x = x2 - q * x1;
+            int y = y2 - q * y1;
+            // 𝑎 ← 𝑏, 𝑏 ← 𝑟, 𝑥2 ← 𝑥1 , 𝑥1 ← 𝑥, 𝑦2 ← 𝑦1 , 𝑦1 ← 𝑦
+            a = b;
+            b = r;
+            x2 = x1;
+            x1 = x;
+            y2 = y1;
+            y1 = y;
+        }
+
+        // truong hop x2 nho hon 0 cong voi b den khi duong thi thoi
+        while (x2 < 0) {
+            x2 = x2 + epN;
+        }
+
+        return x2;
+    }
+
+    public static Boolean kiemTraSoNguyenToCungNhau(int n,int e) {
+        if (gcd(n, e) == 1) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static long encryption(int m,int e,int n) {
+        System.out.println("encryotion RSA  m = " + m  + " ,e = " + e +" n = " + n);
+        long c = power(m, e, n);
+        System.out.println("encryption : c = " + c);
+        return c;
+    }
+
+    public static void decryption(int c,int d,int n) {
+        System.out.println("decryotion RSA  c = " + c  + " ,d = " + d +" n = " + n);
+        System.out.println("decryption : m = " + power(c, d, n));
+
+    }
+
+    public static void main(String[] args) {
+        int p,q,SBD;
+        // nhap p
+        // do {
+        //     System.out.println("nhap so p thoa man q > 100 va la so nguyen to : ");
+        //     p = scanner.nextInt();
+        // } while (isPrime(p));
+        System.out.println("nhap so p : ");
+        p = scanner.nextInt();
+        while (!isPrime(p)) {
+            System.out.println("nhap so p thoa man q > 100 va la so nguyen to : ");
+            p = scanner.nextInt();
+        }
+
+        System.out.println("nhap so q : ");
+        q = scanner.nextInt();
+        while (!isPrime(q)) {
+            System.out.println("nhap so q thoa man q < 500 va la so nguyen to : ");
+            q = scanner.nextInt();
+        }
+
+        int N = p*q;
+        int epN = (p - 1) * (q - 1);
+
+        // nhap e
+        System.out.println("nhap so e : ");
+        int e = scanner.nextInt();
+        while (!kiemTraSoNguyenToCungNhau(e, epN)) {
+            System.out.println("nhap lai so e : ");
+            e = scanner.nextInt();
+        }
+
+        int d = extend_Euclide(e, epN);
+
+        System.out.println(" nhap SBD : ");
+        SBD = scanner.nextInt();
+        int m = SBD;
+
+        // tien hanh ma koa
+        System.out.println("---------------------------------");
+        int c = (int) encryption(m, e, N);
+        System.out.println("---------------------------------");
+        decryption(c, d, N);
+
+    }
+}
+```
+
 ### Bài 34:
 
 - Cài đặt thuật toán kiểm tra số nguyên tố Fermat. Trong trường hợp số nào thì thuật toán
@@ -2271,6 +2417,852 @@ class Solution {
         for (int n = 1; n < 100; n++)
             if (isPrime(n, k))
                 System.out.print(n + " ");
+    }
+}
+```
+
+### Bài 36:
+
+- Lập trình tìm kiếm xâu S1 trong xâu S2 theo thuật toán Boyer-Moore, in giá trị của bảng.
+  Trong trường hợp nào thì thuật toán Boyer-Moore được xem là cải tiến hơn thuật toán tìm kiếm
+  vét cạn.
+  - REPLY:
+
+```java
+package ex;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Solution {
+	public static int findBoyerMoore(char[] text, char[] pattern) {
+		System.out.println("Boyer-Moore looking for " + String.valueOf(pattern) + " in " + String.valueOf(text));
+		int n = text.length;
+		int m = pattern.length;
+
+		if (m == 0)
+			return 0;
+
+		Map<Character, Integer> last = new HashMap<>();
+		for (int i = 0; i < n; i++) {
+			last.put(text[i], -1);
+		}
+		for (int i = 0; i < m; i++) {
+			last.put(pattern[i], i);
+		}
+		int i = m - 1;
+		int k = m - 1;
+		while (i < n) {
+			if (text[i] == pattern[k]) {
+				if (k == 0) {
+					System.out.println("\tFound match in the given text at index " + i);
+					return i;
+				}
+				i--;
+				k--;
+			} else {
+				i += m - Math.min(k, 1 + last.get(text[i]));
+				k = m - 1;
+			}
+		}
+		System.out.println("\tNo match found in the given text.");
+		return -1;
+	}
+
+	public static void main(String args[]) {
+		char[] text = "abcfefabddef".toCharArray();
+		char[] pattern = "abddef".toCharArray();
+		findBoyerMoore(text, pattern);
+	}
+}
+```
+
+### Câu 37
+
+- Lập trình tìm kiếm xâu S1 trong xâu S2 theo thuật toán Knutt-Morris-Patt. Trong trường
+  hợp nào thì thuật toán Boyer-Moore được xem là cải tiến hơn thuật toán tìm kiếm vét cạn?
+
+  - REPLY:
+
+    - Cách hoạt động: Boyer-Moore sử dụng hai phương pháp tìm kiếm khác nhau để tìm kiếm chuỗi mẫu trong chuỗi mẹ, trong khi đó Knuth-Morris-Pratt sử dụng một bảng chuyển trạng thái để tìm kiếm chuỗi mẫu.
+
+    - Độ phức tạp: Boyer-Moore có thể xử lý tốt hơn trong các trường hợp tìm kiếm chuỗi mẫu có độ dài lớn hơn, trong khi đó Knuth-Morris-Pratt thường hiệu suất tốt hơn trong các trường hợp tìm kiếm chuỗi mẫu có độ dài nhỏ hơn.
+
+    - Độ phức tạp không tuyến tính: Boyer-Moore có độ phức tạp không tuyến tính O(n+m), trong khi đó Knuth-Morris-Pratt có độ phức tạp không tuyến tính O(n). Điều này có nghĩa là Boyer-Moore có thể tìm kiếm chuỗi mẫu trong chuỗi mẹ một cách hiệu quả hơn trong các trường hợp tìm kiếm chuỗi mẫu có độ dài lớn hơn.
+
+```java
+package ex;
+
+class Solution {
+	public static void KMPSearch(String pat, String txt) {
+		int M = pat.length();
+		int N = txt.length();
+
+		int lps[] = new int[M];
+		int j = 0;
+
+		computeLPSArray(pat, M, lps);
+
+		int i = 0;
+		while ((N - i) >= (M - j)) {
+			if (pat.charAt(j) == txt.charAt(i)) {
+				j++;
+				i++;
+			}
+			if (j == M) {
+				System.out.println("Found pattern " + "at index " + (i - j));
+				j = lps[j - 1];
+			}
+
+			else if (i < N && pat.charAt(j) != txt.charAt(i)) {
+				if (j != 0)
+					j = lps[j - 1];
+				else
+					i = i + 1;
+			}
+		}
+	}
+
+	public static void computeLPSArray(String pat, int M, int lps[]) {
+		int len = 0;
+		int i = 1;
+		lps[0] = 0;
+
+		while (i < M) {
+			if (pat.charAt(i) == pat.charAt(len)) {
+				len++;
+				lps[i] = len;
+				i++;
+			} else {
+				if (len != 0) {
+					len = lps[len - 1];
+				} else {
+					lps[i] = len;
+					i++;
+				}
+			}
+		}
+	}
+
+	public static void main(String args[]) {
+		String txt = "ABABDABACDABABCABAB";
+		String pat = "ABABCABAB";
+		KMPSearch(pat, txt);
+	}
+}
+```
+
+### Câu 38:
+
+- Tìm nghịch đảo của một số a trong trường Fp với a và p được nhập từ bàn phím.
+
+```java
+package ex;
+
+import java.util.Scanner;
+
+public class Solution {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    private static int extend_Euclide(int n, int p) {
+        int x2 = 1, x1 = 0, y2 = 0, y1 = 1;
+        int a = n,b = p;
+        while (b > 0) {
+            int q = a / b;
+            int r = a % b;
+            int x = x2 - q * x1;
+            int y = y2 - q * y1;
+            a = b;
+            b = r;
+            x2 = x1;
+            x1 = x;
+            y2 = y1;
+            y1 = y;
+        }
+        return x2;
+    }
+
+    public static void main(String[] args) {
+        int a = scanner.nextInt();
+        int p = scanner.nextInt();
+        System.out.println(extend_Euclide(a, p));
+    }
+}
+```
+
+### Bài 39:
+
+- Cho mảng A nhập từ bàn phím gồm các số nguyên dương. Hãy viết chương trình tìm các
+  cặp số (i,j) trong mảng A sao cho ước chung lớn nhất của chúng là một số nguyên tố.
+
+```java
+package ex;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+
+	public static boolean isPrime(int n) {
+		if (n <= 1)
+			return false;
+
+		// Check if n=2 or n=3
+		if (n == 2 || n == 3)
+			return true;
+
+		// Check whether n is divisible by 2 or 3
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+
+		// Check from 5 to square root of n
+		// Iterate i by (i+6)
+		for (int i = 5; i <= Math.sqrt(n); i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	public static int gcd(int l, int b) {
+		while (b > 0) {
+			int r = l % b;
+			l = b;
+			b = r;
+		}
+		return l;
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Enter n: ");
+		int n = sc.nextInt();
+		int[] arr = new int[n];
+		for (int i = 0; i < n; i++) {
+			arr[i] = sc.nextInt();
+		}
+
+		for(int i = 0; i < n; i++) {
+			for(int j = i; j < n; j++) {
+				if(isPrime(gcd(i, j))) {
+					System.out.println(i + " " + j);
+				}
+			}
+		}
+	}
+}
+```
+
+### Bài 40:
+
+- Cho mảng A nhập từ bàn phím gồm các số nguyên dương. Hãy viết chương trình đếm
+  các cặp số (i,j) trong mảng A sao cho ước chung lớn nhất của chúng là một số nguyên tố.
+
+```java
+package ex;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+
+	public static boolean isPrime(int n) {
+		if (n <= 1)
+			return false;
+
+		// Check if n=2 or n=3
+		if (n == 2 || n == 3)
+			return true;
+
+		// Check whether n is divisible by 2 or 3
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+
+		// Check from 5 to square root of n
+		// Iterate i by (i+6)
+		for (int i = 5; i <= Math.sqrt(n); i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	public static int gcd(int l, int b) {
+		while (b > 0) {
+			int r = l % b;
+			l = b;
+			b = r;
+		}
+		return l;
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Enter n: ");
+		int n = sc.nextInt();
+		int[] arr = new int[n];
+		for (int i = 0; i < n; i++) {
+			arr[i] = sc.nextInt();
+		}
+        int count = 0;
+		for(int i = 0; i < n - 1; i++) {
+			for(int j = i + 1; j < n; j++) {
+				if(isPrime(gcd(i, j))) {
+					System.out.println(i + " " + j);
+                    count++;
+				}
+			}
+		}
+	}
+}
+```
+
+### Bài 41:
+
+- Cho các số nguyên dương a,k,n, nhập từ bàn phím (0<a,k<n<1000), Viết chương trình xác định xem a^k mod n có phải là một số nguyên tố hay không (sử dụng thuật toán bình phương và nhân có lặp)?
+
+```java
+
+package ex;
+
+import java.util.Scanner;
+
+class Solution {
+	static Scanner sc = new Scanner(System.in);
+
+	public static boolean isPrime(int n) {
+		if (n <= 1)
+			return false;
+
+		// Check if n=2 or n=3
+		if (n == 2 || n == 3)
+			return true;
+
+		// Check whether n is divisible by 2 or 3
+		if (n % 2 == 0 || n % 3 == 0)
+			return false;
+
+		// Check from 5 to square root of n
+		// Iterate i by (i+6)
+		for (int i = 5; i <= Math.sqrt(n); i = i + 6)
+			if (n % i == 0 || n % (i + 2) == 0)
+				return false;
+
+		return true;
+	}
+
+	// Nhân bình phương có lặp
+		static int power(int a, int n, int p) {
+			// Initialize result
+			int res = 1;
+
+			// Update 'a' if 'a' >= p
+			a = a % p;
+
+			while (n > 0) {
+				// If n is odd, multiply 'a' with result
+				if ((n & 1) == 1)
+					res = (res * a) % p;
+
+				// n must be even now
+				n = n >> 1; // n = n/2
+				a = (a * a) % p;
+			}
+			return res;
+		}
+	public static void main(String[] args) {
+		int a, k, n;
+		a = sc.nextInt();
+		k = sc.nextInt();
+		n = sc.nextInt();
+		if(isPrime(power(a, k, n))) {
+			System.out.println("YES");
+			return;
+		}
+		System.out.println("NO");
+	}
+}
+```
+
+### Bài 42
+
+- Viết chương trình sinh ra 2 số nguyên tố 0<p,q<1000 và kiểm tra với với số 0<a<100 thì
+  liệt kê những số a thoả mãn: a^p mod q là số nguyên tố.
+
+```java
+package ex;
+
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Solution {
+
+    static int[] list_frime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+        31, 37, 41, 43, 47, 53, 59, 61, 67,
+        71, 73, 79, 83, 89, 97, 101, 103,
+        107, 109, 113, 127, 131, 137, 139,
+        149, 151, 157, 163, 167, 173, 179,
+        181, 191, 193, 197, 199, 211, 223,
+        227, 229, 233, 239, 241, 251, 257,
+        263, 269, 271, 277, 281, 283, 293,
+        307, 311, 313, 317, 331, 337, 347, 349};
+
+    public static int randomN() {
+        int min = 2, max = 1000;
+        return ThreadLocalRandom.current().nextInt(min,max + 1);
+    }
+
+    public static int getLowLevelPrime() {
+        while (true) {
+            int pc = randomN();
+
+            for (int i : list_frime) {
+                if (pc % i == 0 && i*i <= pc) {
+                    break;
+                }else{
+                    return pc;
+                }
+            }
+        }
+    }
+
+    public static long square_loop(long a,long k,long n) {
+        long b = 1;
+        a = a % n;
+        while (k > 0) {
+            if (k % 2 == 1) {
+                b = (b * a) % n;
+            }
+            k = k / 2;
+            a = (a*a) % n;
+        }
+        return b;
+    }
+
+    public static Boolean millerRabin(int r,int n) {
+        int min = 2, max = n - 2;
+        int a = (int) Math.floor(Math.random() * (max - min + 1) + min);
+        int x = (int) square_loop(a, r, n);
+        if (x == 1 || x == n - 1) {
+            return true;
+        }
+        while (r != n - 1) {
+            x = (x * x) % n;
+            r = r * 2;
+
+            if (x == 1) {
+                return false;
+            }
+            if (x == n - 1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static Boolean isPrime(int n ,int k) {
+        if (n <= 1 || n == 4) {
+            return false;
+        }
+        if (n <= 3) {
+            return true;
+        }
+
+        int r = n - 1;
+        while (r % 2 == 0) {
+            r = r / 2;
+        }
+
+        while (k > 0) {
+            if (!millerRabin(r, n)) {
+                return false;
+            }
+            k--;
+        }
+        return true;
+    }
+
+    public static int random_search() {
+        while (true) {
+            int prime_number = getLowLevelPrime();
+            if (!isPrime(prime_number, 10)) {
+                continue;
+            }else{
+                return prime_number;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int p , q;
+        p = random_search();
+        q = random_search();
+        System.out.println("p = " + p);
+        System.out.println("q = " + q);
+        for (int i = 1; i <= 100; i++) {
+            int x = (int) square_loop(i, p, q);
+            if (isPrime(x, 5)) {
+                System.out.println("i  : " + i + " x : " + x);
+            }
+        }
+    }
+}
+```
+
+### Bài 43:
+
+- Cho N nhập vào từ bàn phím (0<N<1000), sinh một số nguyên tố p<100. Hãy viết
+  chương trình tìm tất cả các số nguyên a<N sao cho a p mod N là số nguyên tố.
+
+```java
+package ex;
+
+import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Solution {
+    static Scanner scanner = new Scanner(System.in);
+    static int[] list_frime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+        31, 37, 41, 43, 47, 53, 59, 61, 67,
+        71, 73, 79, 83, 89, 97};
+
+    public static int randomN() {
+        int min = 2, max = 100;
+        return ThreadLocalRandom.current().nextInt(min,max + 1);
+    }
+
+    public static int getLowLevelPrime() {
+        while (true) {
+            int pc = randomN();
+            for (int i : list_frime) {
+                if (pc % i == 0 && i*i <= pc) {
+                    break;
+                }else{
+                    return pc;
+                }
+            }
+        }
+    }
+
+    public static long square_loop(long a,long k,long n) {
+        long b = 1;
+        a = a % n;
+        while (k > 0) {
+            if (k % 2 == 1) {
+                b = (b * a) % n;
+            }
+            k = k / 2;
+            a = (a*a) % n;
+        }
+        return b;
+    }
+
+    public static Boolean millerRabin(int r,int n) {
+        int min = 2, max = n - 2;
+        int a = (int) Math.floor(Math.random() * (max - min + 1) + min);
+        int x = (int) square_loop(a, r, n);
+        if (x == 1 || x == n - 1) {
+            return true;
+        }
+        while (r != n - 1) {
+            x = (x * x) % n;
+            r = r * 2;
+
+            if (x == 1) {
+                return false;
+            }
+            if (x == n - 1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static Boolean isPrime(int n ,int k) {
+        if (n <= 1 || n == 4) {
+            return false;
+        }
+        if (n <= 3) {
+            return true;
+        }
+
+        int r = n - 1;
+        while (r % 2 == 0) {
+            r = r / 2;
+        }
+
+        while (k > 0) {
+            if (!millerRabin(r, n)) {
+                return false;
+            }
+            k--;
+        }
+        return true;
+    }
+
+    public static int random_search() {
+        while (true) {
+            int prime_number = getLowLevelPrime();
+            if (!isPrime(prime_number, 10)) {
+                continue;
+            }else{
+                return prime_number;
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+        int N,p;
+        N = scanner.nextInt();
+        p = random_search();
+        System.out.println("sinh so nguyen to P : " + p);
+        for (int i = 2; i <= N; i++) {
+            int x = (int) square_loop(i, p, N);
+            if (isPrime(x, 5)) {
+                System.out.println("i : " + i + " power = " + x);
+            }
+        }
+    }
+}
+```
+
+### Bài 44:
+
+- Cho mảng A gồm các số nguyên thuộc Fp nhập vào từ bàn phím, hãy viết chương trình in
+  ra mảng B có các phần tử là nghịch đảo của các phần tử tương ứng trong A.
+
+```java
+package ex;
+
+import java.util.Scanner;
+
+public class Solution {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    public static int gcd(int x,int y) {
+        int a,b;
+        if (x > y) {
+            a = x ; b = y;
+        }else{
+            a = y; b = x;
+        }
+        while (b > 0) {
+            int r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
+    }
+
+    public static void ScannerArray(int n, int[] arr,int p) {
+        System.out.println("nhap cac phan tu sao cho p va phan tu do co uoc chung la 1");
+        for (int i = 0; i < n; i++) {
+            System.out.println("a[" + i + "] : ");
+            arr[i] = scanner.nextInt();
+        }
+    }
+
+    private static int extend_Euclide(int n, int p) {
+        int x2 = 1, x1 = 0, y2 = 0, y1 = 1;
+        int a = n,b = p;
+        while (b > 0) {
+            // 𝑞 ← 𝑎/𝑏 , 𝑟 ← 𝑎 − 𝑞𝑏, 𝑥 ← 𝑥2 − 𝑞𝑥1 , 𝑦 ← 𝑦2 − 𝑞𝑦1
+            int q = a / b;
+            int r = a % b;
+            int x = x2 - q * x1;
+            int y = y2 - q * y1;
+            // 𝑎 ← 𝑏, 𝑏 ← 𝑟, 𝑥2 ← 𝑥1 , 𝑥1 ← 𝑥, 𝑦2 ← 𝑦1 , 𝑦1 ← 𝑦
+            a = b;
+            b = r;
+            x2 = x1;
+            x1 = x;
+            y2 = y1;
+            y1 = y;
+        }
+
+        // truong hop x2 nho hon 0 cong voi b den khi duong thi thoi
+        while (x2 < 0) {
+            x2 = x2 + p;
+        }
+
+        return x2;
+    }
+
+    public static void printArray(int[] arr,int n) {
+        System.out.print("[ ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println(" ]");
+    }
+
+    public static void main(String[] args) {
+        int p,n;
+        System.out.println("nhap so p : ");
+        p = scanner.nextInt();
+        System.out.println("nhap so luong phan tu : ");
+        n = scanner.nextInt();
+        int[] arr = new int[n + 1];
+        ScannerArray(n, arr, p);
+        printArray(arr, n);
+        System.out.println(gcd(5, 10));
+        int[] arr2 = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            arr2[i] = extend_Euclide(arr[i], p);
+        }
+        printArray(arr2, n);
+    }
+}
+```
+
+### Bài 45
+
+- Viết chương trình sinh một mảng số nguyên tố A gồm N phần tử (N nhập từ bàn phím)
+  sử dụng kiểm tra Miller-Rabin. In ra mảng và tính khoảng cách nhỏ nhất giữa 2 số bất kỳ trong
+  mảng.
+
+```java
+package ex;
+
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Solution {
+
+    static int[] list_frime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+        31, 37, 41, 43, 47, 53, 59, 61, 67,
+        71, 73, 79, 83, 89, 97, 101, 103,
+        107, 109, 113, 127, 131, 137, 139,
+        149, 151, 157, 163, 167, 173, 179,
+        181, 191, 193, 197, 199, 211, 223,
+        227, 229, 233, 239, 241, 251, 257,
+        263, 269, 271, 277, 281, 283, 293,
+        307, 311, 313, 317, 331, 337, 347, 349};
+
+    static Scanner scanner = new Scanner(System.in);
+
+    public static int randomN() {
+        int min = 2, max = 1000;
+        return ThreadLocalRandom.current().nextInt(min,max + 1);
+    }
+
+    public static int getLowLevelPrime() {
+        while (true) {
+            int pc = randomN();
+
+            for (int i : list_frime) {
+                if (pc % i == 0 && i*i <= pc) {
+                    break;
+                }else{
+                    return pc;
+                }
+            }
+        }
+    }
+
+    public static long square_loop(long a,long k,long n) {
+        long b = 1;
+        a = a % n;
+        while (k > 0) {
+            if (k % 2 == 1) {
+                b = (b * a) % n;
+            }
+            k = k / 2;
+            a = (a*a) % n;
+        }
+        return b;
+    }
+
+    public static Boolean millerRabin(int r,int n) {
+        int min = 2, max = n - 2;
+        int a = (int) Math.floor(Math.random() * (max - min + 1) + min);
+        int x = (int) square_loop(a, r, n);
+        if (x == 1 || x == n - 1) {
+            return true;
+        }
+        while (r != n - 1) {
+            x = (x * x) % n;
+            r = r * 2;
+
+            if (x == 1) {
+                return false;
+            }
+            if (x == n - 1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static Boolean isPrime(int n ,int k) {
+        if (n <= 1 || n == 4) {
+            return false;
+        }
+        if (n <= 3) {
+            return true;
+        }
+
+        int r = n - 1;
+        while (r % 2 == 0) {
+            r = r / 2;
+        }
+
+        while (k > 0) {
+            if (!millerRabin(r, n)) {
+                return false;
+            }
+            k--;
+        }
+        return true;
+    }
+
+    public static int random_search() {
+        while (true) {
+            int prime_number = getLowLevelPrime();
+            if (!isPrime(prime_number, 10)) {
+                continue;
+            }else{
+                return prime_number;
+            }
+        }
+    }
+
+    public static void printArray(int[] arr,int n) {
+        System.out.print("[ ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println(" ]");
+    }
+
+    public static void MinDistane(int[] arr, int N) {
+        Arrays.sort(arr);
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < N - 1; i++) {
+            if (arr[i + 1] - arr[i] < min) {
+                min = arr[i + 1] - arr[i];
+            }
+        }
+        System.out.println("min : " + min);
+    }
+
+    public static void main(String[] args) {
+        int N;
+        System.out.println("nhap kich thuoc mang : ");
+        N = scanner.nextInt();
+        int[] arr = new int[N + 1];
+        for (int i = 0; i < N; i++) {
+            arr[i] = random_search();
+        }
+        printArray(arr, N);
+        MinDistane(arr, N);
+
     }
 }
 ```
