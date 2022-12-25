@@ -1122,9 +1122,9 @@ public class Solution {
 		fillPrime(chprime, high);
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
-        if (low < 2) {
-			prime[0] = false;
-		}
+        if(low < 2) {
+            prime[0] = false;
+        }
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {

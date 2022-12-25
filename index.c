@@ -1,78 +1,49 @@
 #include <stdio.h>
-#include <stdlib.h>
-
-int binhPhuongLap(int x, int n, int m)
+#include <math.h>
+int gcd(int l, int b)
 {
-    int a = 1;
-    int b = x;
-    while (n > 0)
+    while (b > 0)
     {
-        if (n % 2 == 1)
-            a = (a * b) % m;
-        b = (b * b) % m;
-        n = n / 2;
+        int r = l % b;
+        l = b;
+        b = r;
     }
-    return a % m;
+    return l;
 }
 
-int fermat(int n, int t)
+int isPrime(int n)
 {
-    if ((n != 2 && n % 2 == 0) || n < 2)
+    // Check if n=1 or n=0
+    if (n <= 1)
         return 0;
+    // Check if n=2 or n=3
     if (n == 2 || n == 3)
         return 1;
-
-    else
-    {
-        int r[t];
-        int temp = 0, a = 2;
-        for (int i = 1; i <= t; i++)
-        {
-            r[i] = binhPhuongLap(a, n - 1, n);
-            a++;
-        }
-        for (int i = 1; i < t; i++)
-        {
-            for (int j = 2; j <= t; j++)
-            {
-                if (r[i] != r[j])
-                    temp++;
-            }
-        }
-        if (temp == 0)
-            return 1;
-        else
-            return 0;
-    }
-}
-
-int tinhF(int i)
-{
-    if (fermat(i, 3) == 1)
-        return i;
-    else
+    // Check whether n is divisible by 2 or 3
+    if (n % 2 == 0 || n % 3 == 0)
         return 0;
+    // Check from 5 to square root of n
+    // Iterate i by (i+6)
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return 0;
+
+    return 1;
 }
 
 int main()
 {
-    int L, R, Tong = 0;
-    printf("Nhap gioi han dau L: ");
-    scanf("%d", &L);
-    printf("Nhap gioi han cuoi R: ");
-    scanf("%d", &R);
-    printf("F[i] * F[j] =\n");
-    printf("----------------------------\n");
-    for (int i = L; i < R; i++)
+    int a = 1, b = 9;
+    int i, j;
+    for (i = a; i < b; i++)
     {
-        for (int j = L + 1; j <= R; j++)
+        for (j = a; j < b; j++)
         {
-            if (j > i)
+            int d = gcd(i, j);
+            if (isPrime(d) == 1)
             {
-                printf("F[%d] * F[%d] = %d\n", i, j, tinhF(i) * tinhF(j));
-                Tong = Tong + tinhF(i) * tinhF(j);
+                printf("[%d %d]\n", i, j);
             }
         }
     }
-    printf("Tong= %d", Tong);
 }
