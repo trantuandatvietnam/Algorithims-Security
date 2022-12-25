@@ -4,6 +4,8 @@
 
 ### Bài 1 Một số gọi là Q-prime khi nó có đúng 4 ước số nguyên dương. Hãy viết chương trình in ra các số Q-Prime nhỏ hơn hoặc bằng một số N cho trước nhập từ bàn phím.
 
+- Bài này chỉ cần liệt kê toàn bộ các ước từ 1 - căn(n) (Sau đó sẽ tìm ra các ước còn lại bằng việc chia n cho các ước vừa tìm được)
+
 ```c
 #include <stdio.h>
 #include <stdbool.h>
@@ -49,6 +51,8 @@ int main()
 
 ### Bài 2: Viết chương trình tìm các số nguyên tố có N chữ số với N nhập từ bàn phím và 2 ≤ N ≤ 10.
 
+- Giải thích chi tiết ở bài 4
+
 ```java
 package ex;
 
@@ -81,6 +85,9 @@ public class Solution {
 		fillPrime(chprime, high);
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+		if (low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {
@@ -94,6 +101,7 @@ public class Solution {
 				prime[j - low] = false;
 			}
 		}
+
 		for (int i = low; i <= high; i++) {
 			if (prime[i - low] == true) {
 				System.out.printf("%d\n", i);
@@ -166,7 +174,7 @@ int main()
 - EXPLAIN:
 
 1. Sử dụng sàng đơn giản để tìm ra tất cả các số nguyên tố từ 2 đến căn bậc 2 của b, và lưu trữ các số nguyên tố này trong một mảng.
-2. Tạo một mảng đánh dấu: [high - low + 1]
+2. Tạo một mảng đánh dấu: [high - low + 1], mảng này để lưu trữ các giá trị số nguyên tố trong đoạn [low, high]
 3. Lặp lại tất cả các số nguyên tố được tìm thấy ở bước 1, Đối với số nguyên tố, hãy đánh dấu bội số của nó trong phạm vi từ [low, high]
 
 - NX: Vì vậy, không giống như sàng đơn giản, không kiểm tra tất cả bội số của mọi số nhỏ hơn căn bậc hai của high, chỉ kiểm tra bội số của các số nguyên tố được tìm thấy ở bước 1. Và không cần space O(high), cần O (sqrt(high) + n) không gian.
@@ -200,11 +208,16 @@ public class Solution {
 
 	public static void segmentedSieve(int low, int high) {
 		ArrayList<Integer> chprime = new ArrayList<Integer>();
-		fillPrime(chprime, high);
+		fillPrime(chprime, high);   // chprimes là mảng các số nguyên tố từ [2,sqrt(n)]
+        // Lấy các số nguyên tố từ 2 - căn(n) là bởi bội số của tất cả các số nguyên tố < high được đánh dấu bằng các số nguyên tố trong phạm
+        // vi 2-căn(n). VD: số 7 có bội là 14 được đánh dấu bằng số 2, 21 được đánh dấu bằng số 3...  49 được đánh dấu = 7 => range [2 - sqrt(49)]
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+		if(low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
-			int lower = (low / i);
+			int lower = (low / i);  // lower được hiểu là bội số đầu tiên của số nguyên tố trong phạm vi [low, high] VD: 3 trong [28, 40] có bội số đầu tiên là 30
 			if (lower <= 1) {
 				lower = i + i;
 			} else if (low % i != 0) {
@@ -240,6 +253,8 @@ public class Solution {
 
 ### Bài 5: Viết chương trình tính tổng của các số nguyên tố nằm trong khoảng [A, B] với A, B nhập vào từ bàn phím.
 
+- Tương tự các bài trên
+
 ```java
 package ex;
 import java.util.*;
@@ -271,6 +286,9 @@ public class Solution {
 		fillPrime(chprime, high);
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+        if (low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {
@@ -306,23 +324,29 @@ public class Solution {
 
 ### Bài 6: Cặp số thân thiết
 
+- Hai số tạo thành một cặp số thân thiết khi chúng tuân theo quy luật: Số này bằng tổng tất
+  cả các ước của số kia (trừ chính số đó) và ngược lại. Viết chương trình tìm hai số dạng này nhỏ
+  hơn N (với N nhập vào từ bàn phím).
+
 ```java
 package ex;
 
 import java.util.Scanner;
 
 public class Solution {
-
     static Scanner scanner = new Scanner(System.in);
-
-    public static long sumOfDivisior(long n) {
-        long sum = 1;
-        for (long i = 2; i*i < n; i++) {
+    public static long tongCacSoUocSo(long n) {
+        long sum = 0;
+        for (long i = 1; i*i < n; i++) {
             if (n % i == 0) {
                 if (n / i == i) {
-                    sum += 1;
+                    sum += i;
                 }else{
-                    sum += (i + (n / i));
+                	if(n / i != n) {
+                		sum += (i + (n / i));
+                	}else {
+                		sum += i;
+                	}
                 }
             }
         }
@@ -333,8 +357,8 @@ public class Solution {
         long n;
         n = scanner.nextLong();
         for (long i = 1; i <= n; i++) {
-            long a = sumOfDivisior(i);
-            if (i == sumOfDivisior(a) && a != i && a < n && i < a) {
+            long a = tongCacSoUocSo(i);
+            if (i == tongCacSoUocSo(a) && a != i && a < n && i < a) {
                 System.out.println(i + " " + a);
             }
         }
@@ -343,6 +367,10 @@ public class Solution {
 ```
 
 ### Bài 7: số Emirp
+
+- Một số emirp là một số nguyên tố mà khi đảo ngược vị trí các chữ số của nó, ta cũng được
+  một số nguyên tố. Viết chương trình liệt kê các số emirp nhỏ hơn N với N nhập vào từ bàn phím.
+- Bài này làm đúng theo yêu cầu của đề là được
 
 ```java
 package ex;
@@ -397,6 +425,9 @@ public class Solution {
 
 ### Bài 8: Т-prime
 
+- Một số gọi là số Т-prime nếu có có đúng 3 ước nguyên dương. Viết chương trình tìm các
+  số Т-prime nhỏ hơn hoặc bằng N với N cho trước nhập từ bàn phím.
+
 ```c
 #include <stdio.h>
 #include <stdbool.h>
@@ -442,6 +473,10 @@ int main()
 
 ### Bài 9: SL Số nguyên tố nhỏ hơn hoặc bằng n
 
+- Viết chương trình đếm số số nguyên tố nhỏ hơn hoặc bằng N với N được nhập vào từ bàn
+  phím.
+- Bài toán sử dụng sàng đơn giản để đếm số nguyên tố
+
 ```java
 package ex;
 
@@ -484,6 +519,8 @@ public class Solution {
 ```
 
 ### Bài 10: Viết chương trình đếm số ước và số ước nguyên tố của một số N nhập vào từ bàn phím.
+
+- Bài này tương tự những bài trên, chỉ cần thêm điều kiện để đếm số nguyên tố
 
 ```java
 package ex;
@@ -597,26 +634,6 @@ public class Solution {
 #include <stdbool.h>
 #include <string.h>
 
-int isPrime(int n)
-{
-    // Check if n=1 or n=0
-    if (n <= 1)
-        return 0;
-    // Check if n=2 or n=3
-    if (n == 2 || n == 3)
-        return 1;
-    // Check whether n is divisible by 2 or 3
-    if (n % 2 == 0 || n % 3 == 0)
-        return 0;
-    // Check from 5 to square root of n
-    // Iterate i by (i+6)
-    for (int i = 5; i * i <= n; i = i + 6)
-        if (n % i == 0 || n % (i + 2) == 0)
-            return 0;
-
-    return 1;
-}
-
 int SieveOfEratosthenes(int n, int arr[])
 {
     bool prime[n + 1];
@@ -655,7 +672,7 @@ int main()
         int a2 = arr[i + 1];
         int a3 = arr[i + 2];
         int a4 = arr[i + 3];
-        if (isPrime(a1 + a2 + a3 + a4) == 1 && a1 + a2 + a3 + a4 <= n)
+        if (a1 + a2 + a3 + a4 <= n)
         {
             printf("%d %d %d %d", a1, a2, a3, a4);
             return;
@@ -774,6 +791,9 @@ public class Solution {
 		fillPrime(chprime, high);
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+        if (low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {
@@ -788,7 +808,7 @@ public class Solution {
 			}
 		}
 		for (int i = low; i <= high; i++) {
-			if (prime[i - low] == true && Math.cbrt(reverse(i)) == Math.round(Math.cbrt(reverse(i)))) {
+			if (prime[i - low] && Math.cbrt(reverse(i)) == Math.round(Math.cbrt(reverse(i)))) {
 				System.out.println(i);
 			}
 		}
@@ -1030,9 +1050,10 @@ bool checkPrime(int n)
     {
         if (n % i == 0 || n % (i + 2) == 0)
             return false;
-        return true;
     }
+    return true;
 }
+
 int main()
 {
     int a, b, i, j;
@@ -1072,88 +1093,73 @@ int main()
 ```java
 package ex;
 
-import java.io.*;
-import java.math.*;
-import java.util.Scanner;
+import java.util.*;
+import java.lang.Math;
 
-class Solution {
-	static Scanner sc = new Scanner(System.in);
+public class Solution {
+	public static void fillPrime(ArrayList<Integer> chprime, int high) {
+		boolean[] ck = new boolean[high + 1];
+		Arrays.fill(ck, true);
+		ck[1] = false;
+		ck[0] = false;
 
-	/*
-	 * Iterative Function to calculate // (a^n)%p in O(logy)
-	 */
-	// Nhân bình phương có lặp
-	static int power(int a, int n, int p) {
-		// Initialize result
-		int res = 1;
-
-		// Update 'a' if 'a' >= p
-		a = a % p;
-
-		while (n > 0) {
-			// If n is odd, multiply 'a' with result
-			if ((n & 1) == 1)
-				res = (res * a) % p;
-
-			// n must be even now
-			n = n >> 1; // n = n/2
-			a = (a * a) % p;
+		for (int i = 2; (i * i) <= high; i++) {
+			if (ck[i] == true) {
+				for (int j = i * i; j <= Math.sqrt(high); j = j + i) {
+					ck[j] = false;
+				}
+			}
 		}
-		return res;
+		for (int i = 2; i * i <= high; i++) {
+			if (ck[i] == true) {
+				chprime.add(i);
+			}
+		}
 	}
 
-	// If n is prime, then always returns true,
-	// If n is composite than returns false with
-	// high probability Higher value of k increases
-	// probability of correct result
-	// Fermat
-	static boolean isPrime(int n, int k) {
-		// Corner cases
-		if (n <= 1 || n == 4)
-			return false;
-		if (n <= 3)
-			return true;
-
-		// Try k times
-		while (k > 0) {
-			// Pick a random number in [2..n-2]
-			// Above corner cases make sure that n > 4
-			int a = 2 + (int) (Math.random() % (n - 4));
-
-			// Fermat's little theorem
-			if (power(a, n - 1, n) != 1)
-				return false;
-
-			k--;
+	public static boolean[] segmentedSieve(int low, int high) {
+		ArrayList<Integer> chprime = new ArrayList<Integer>();
+		fillPrime(chprime, high);
+		boolean[] prime = new boolean[high - low + 1];
+		Arrays.fill(prime, true);
+        if (low < 2) {
+			prime[0] = false;
 		}
-
-		return true;
+		for (int i : chprime) {
+			int lower = (low / i);
+			if (lower <= 1) {
+				lower = i + i;
+			} else if (low % i != 0) {
+				lower = (lower * i) + i;
+			} else {
+				lower = (lower * i);
+			}
+			for (int j = lower; j <= high; j = j + i) {
+				prime[j - low] = false;
+			}
+		}
+		return prime;
 	}
 
-	public static int calcFermat(int n, int k) {
-		if (isPrime(n, k)) {
-			return n;
+	static public int calcF(int num, boolean isPrime) {
+		if(isPrime && num != 1) {
+			return num;
 		}
 		return 0;
 	}
 
-	// Driver Program
-	public static void main(String args[]) {
-		// safety parameter ( >= 1, init 3)
-		int k = 3;
-		int l = sc.nextInt();
-		int r = sc.nextInt();
-		int sum = 0;
-		for (int i = l; i < r; i++) {
-			for (int j = i + 1; j <= r; j++) {
-				if (j > i) {
-					System.out.println(
-							"F[" + i + "] *" + " F[" + j + "] = " + calcFermat(i, k) + " + " + calcFermat(j, k));
-					sum += calcFermat(i, k) * calcFermat(j, k);
-				}
-			}
-		}
-		System.out.println("Sum: " + sum);
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int left = sc.nextInt();
+		int right = sc.nextInt();
+		long sum = 0;
+		boolean[] arrPrime = segmentedSieve(left, right);
+		for (int i = left; i < right; i++) {
+            for (int j = i + 1; j <= right; j++) {
+                sum += (calcF(i, arrPrime[i - left]) * calcF(j, arrPrime[j - left]));
+            }
+        }
+		System.out.println(sum);
 	}
 }
 ```
@@ -1215,6 +1221,9 @@ public class Solution {
 		fillPrime(chprime, high);
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+        if (low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {
@@ -1328,6 +1337,9 @@ public class Solution {
 
 		boolean[] prime = new boolean[high - low + 1];
 		Arrays.fill(prime, true);
+        if (low < 2) {
+			prime[0] = false;
+		}
 		for (int i : chprime) {
 			int lower = (low / i);
 			if (lower <= 1) {
@@ -1854,118 +1866,27 @@ package ex;
 import java.util.*;
 
 class Solution {
-
-	static int MAX = 1000000;
 	static Scanner sc = new Scanner(System.in);
-// array to store all primes less than 10^6
-	static ArrayList<Integer> primes = new ArrayList<Integer>();
-
-// Utility function of Sieve of Sundaram
-	static void Sieve() {
-		int n = MAX;
-
-		// In general Sieve of Sundaram, produces primes
-		// smaller than (2*x + 2) for a number given
-		// number x
-		int nNew = (int) Math.sqrt(n);
-
-		// This array is used to separate numbers of the
-		// form i+j+2ij from others where 1 <= i <= j
-		int[] marked = new int[n / 2 + 500];
-
-		// eliminate indexes which does not produce primes
-		for (int i = 1; i <= (nNew - 1) / 2; i++)
-			for (int j = (i * (i + 1)) << 1; j <= n / 2; j = j + 2 * i + 1)
-				marked[j] = 1;
-
-		// Since 2 is a prime number
-		primes.add(2);
-
-		// Remaining primes are of the form 2*i + 1 such
-		// that marked[i] is false.
-		for (int i = 1; i <= n / 2; i++)
-			if (marked[i] == 0)
-				primes.add(2 * i + 1);
+	public static boolean checkPrime(int n)
+	{
+	    int i;
+	    if (n < 2)
+	        return false;
+	    if (n == 2 || n == 3)
+	        return true;
+	    if (n % 2 == 0 || n % 3 == 0)
+	        return false;
+	    for (i = 5; i * i < n; i = i + 6)
+	    {
+	        if (n % i == 0 || n % (i + 2) == 0)
+	            return false;
+	    }
+	    return true;
 	}
 
-// modified binary search to find nearest prime less than N
-	static int binarySearch(int left, int right, int n) {
-		if (left <= right) {
-			int mid = (left + right) / 2;
-
-			// base condition is, if we are reaching at left
-			// corner or right corner of primes[] array then
-			// return that corner element because before or
-			// after that we don't have any prime number in
-			// primes array
-			if (mid == 0 || mid == primes.size() - 1)
-				return primes.get(mid);
-
-			// now if n is itself a prime so it will be present
-			// in primes array and here we have to find nearest
-			// prime less than n so we will return primes[mid-1]
-			if (primes.get(mid) == n)
-				return primes.get(mid - 1);
-
-			// now if primes[mid]<n and primes[mid+1]>n that
-			// mean we reached at nearest prime
-			if (primes.get(mid) < n && primes.get(mid + 1) > n)
-				return primes.get(mid);
-			if (n < primes.get(mid))
-				return binarySearch(left, mid - 1, n);
-			else
-				return binarySearch(mid + 1, right, n);
-		}
-		return 0;
-	}
-
-	static int power(int a, int n, int p) {
+	static long power(long a, long n, long p) {
 		// Initialize result
-		int res = 1;
-
-		// Update 'a' if 'a' >= p
-		a = a % p;
-
-		while (n > 0) {
-			// If n is odd, multiply 'a' with result
-			if ((n & 1) == 1)
-				res = (res * a) % p;
-
-			// n must be even now
-			n = n >> 1; // n = n/2
-			a = (a * a) % p;
-		}
-		return res;
-	}
-
-// Driver code
-	public static void main(String[] args) {
-		Sieve();
-		int mod = 123456;
-
-		int n = sc.nextInt();
-		int primeLessThan = binarySearch(0, primes.size() - 1, n);
-		int k = (primeLessThan - 1) / 6;
-		int primeGatherThan = 6 * (k + 1) + 1;
-		int m = Math.abs(primeGatherThan - n) > Math.abs(primeLessThan - n) ? primeLessThan : primeGatherThan;
-		// calc n^m mod (mod)
-		System.out.println(power(n, m, mod));
-	}
-}
-```
-
-**Cách 2: Hack!!!**
-
-```java
-package ex;
-
-import java.util.*;
-
-class Solution {
-	static Scanner sc = new Scanner(System.in);
-	static int power(int a, int n, int p) {
-		// Initialize result
-		int res = 1;
+		long res = 1;
 
 		// Update 'a' if 'a' >= p
 		a = a % p;
@@ -1985,14 +1906,22 @@ class Solution {
 // Driver code
 	public static void main(String[] args) {
 		int mod = 123456;
-
+		System.out.println("Nhap ma so: ");
 		int n = sc.nextInt();
+		System.out.println("Nhap sbd: ");
+		int a = sc.nextInt();
 		int pow = (int) Math.floor((n - 1) / 6);
 		int primeLessThan = 6 * pow + 1;
+		if(!checkPrime(primeLessThan)) {
+			primeLessThan = 6 * pow - 1;
+		}
 		int primeGatherThan = 6 * (pow + 1) + 1;
-		int m = Math.abs(primeGatherThan - n) > Math.abs(primeLessThan - n) ? primeLessThan : primeGatherThan;
-		// calc n^m mod (mod)
-		System.out.println(power(n, m, mod));
+		if(!checkPrime(primeGatherThan)) {
+			primeGatherThan = 6 * (pow + 1) - 1;
+		}
+		int m = Math.abs(primeGatherThan - n) < Math.abs(primeLessThan - n) ? primeGatherThan: primeLessThan;
+//		 calc a^m mod (mod)
+		System.out.println(power(a, m, mod));
 	}
 }
 ```
@@ -2175,9 +2104,9 @@ class Solution {
 	 * Iterative Function to calculate // (a^n)%p in O(logy)
 	 */
 	// Nhân bình phương có lặp
-	static int power(int a, int n, int p) {
+	static long power(int a, int n, int p) {
 		// Initialize result
-		int res = 1;
+		long res = 1;
 
 		// Update 'a' if 'a' >= p
 		a = a % p;
@@ -2753,9 +2682,9 @@ class Solution {
 	}
 
 	// Nhân bình phương có lặp
-		static int power(int a, int n, int p) {
+		static long power(int a, int n, int p) {
 			// Initialize result
-			int res = 1;
+			long res = 1;
 
 			// Update 'a' if 'a' >= p
 			a = a % p;
