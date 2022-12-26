@@ -1,7 +1,5 @@
 # Thuật toán trong an toàn thông tin
 
-### NOTE: List được tổng hợp từ nhiều nguồn tài liệu và code by Trần Tuấn Đạt KMA
-
 ### Bài 1 Một số gọi là Q-prime khi nó có đúng 4 ước số nguyên dương. Hãy viết chương trình in ra các số Q-Prime nhỏ hơn hoặc bằng một số N cho trước nhập từ bàn phím.
 
 - Bài này chỉ cần liệt kê toàn bộ các ước từ 1 - căn(n) (Sau đó sẽ tìm ra các ước còn lại bằng việc chia n cho các ước vừa tìm được)
@@ -2066,7 +2064,7 @@ public class Solution {
 
         System.out.println(" nhap SBD : ");
         SBD = scanner.nextInt();
-        int m = SBD;
+        int m = SBD + 123;
 
         // tien hanh ma koa
         System.out.println("---------------------------------");
